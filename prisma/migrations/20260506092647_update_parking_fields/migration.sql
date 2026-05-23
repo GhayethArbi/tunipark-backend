@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Tariff" ADD COLUMN     "pricePerUnit" DOUBLE PRECISION NOT NULL DEFAULT 0;

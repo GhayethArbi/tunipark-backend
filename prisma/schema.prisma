@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                    String   @id @default(uuid())
+  firstName             String
+  lastName              String
+  email                 String   @unique
+  phoneNumber           String   @unique
+  isPhoneNumberVerified Boolean  @default(false)
+  isEmailVerified       Boolean  @default(false)
+  isBanned              Boolean  @default(false)
+  password              String
+  role                  UserRole @default(USER)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  phoneOtpHash      String?
+  phoneOtpExpiresAt DateTime?
+
+  phoneResetOtpHash      String?
+  phoneResetOtpExpiresAt DateTime?
+  emailResetOtpHash      String?
+  emailResetOtpExpiresAt DateTime?
+
+  resetTokenVersion Int @default(0)
+
+  auditedZones  ParkingZone[] @relation("UserAuditedZones")
+  ownedParkings Parking[]     @relation("UserOwnedParkings")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  PARKING_OWNER
+  AUDITOR
+}
+
+enum ParkingType {
+  PUBLIC
+  PRIVATE
+}
+
+enum ParkingStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum AccessMode {
+  FREQUENT
+  OCCASIONAL
+}
+
+
+enum ParkingSpotType {
+  COVERED
+  OUTDOOR
+  GARAGE
+  UNDERGROUND
+}
+
+model ParkingZone {
+  id        String @id @default(uuid())
+  name      String
+  city      String
+  geometry  Json // jsonb in Postgres
+  auditorId String
+  auditor   User   @relation("UserAuditedZones", fields: [auditorId], references: [id], onDelete: Restrict)
+
+  parkings Parking[]
+
+  archivedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([auditorId])
+  @@index([city])
+}
+
+model Parking {
+  id                String              @id @default(uuid())
+  title             String              @default("Untitled parking")
+  type              ParkingType         @default(PRIVATE)
+  openingTime       String              @default("07:00")
+  closingTime       String              @default("22:00")
+  spotType          ParkingSpotType     @default(OUTDOOR)
+  description       String              @default("")
+  characteristics   String[]            @default([])
+  pictures          String[]            @default([])
+  location          Json
+  status            ParkingStatus       @default(PENDING)
+
+  availablePlaces   Int       @default(1)
+  maxPlaces         Int       @default(1)
+  vehicleTypes      ParkingVehicleType[]  @default([])
+  accessMode        AccessMode
+  zoneId String?
+  zone   ParkingZone? @relation(fields: [zoneId], references: [id], onDelete: Restrict)
+
+  ownerId String
+  owner   User   @relation("UserOwnedParkings", fields: [ownerId], references: [id], onDelete: Restrict)
+
+  tariff   Tariff?
+  sessions ParkingSession[]
+
+  archivedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([zoneId])
+  @@index([ownerId])
+  @@index([status])
+}
+
+model Tariff {
+  id           String @id @default(uuid())
+  pricePerUnit  Float?     @default(0)
+  pricePerDay   Float     @default(0)
+  pricePerMonth Float     @default(0)
+  minDuration  Int
+  maxDuration  Int
+  
+  parkingId String  @unique
+  parking   Parking @relation(fields: [parkingId], references: [id], onDelete: Restrict)
+
+
+  
+  archivedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([parkingId])
+}
+
+enum ParkingVehicleType {
+  SMALL
+  MEDIUM
+  LARGE
+  HIGH
+  MOTO
+  BIKE
+}
+
+enum SessionStatus {
+  CREATED
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
+model ParkingSession {
+  id String @id @default(uuid())
+
+  parkingId String
+  parking   Parking @relation(fields: [parkingId], references: [id], onDelete: Restrict)
+
+  vehiclePlate String
+  vehicleBrand String?
+  vehicleModel String?
+
+  startTime DateTime
+  endTime   DateTime?
+
+  payment Payment?
+
+  status       SessionStatus @default(CREATED)
+  paidDuration Int           @default(0)
+
+  archivedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([parkingId])
+  @@index([status])
+  @@index([vehiclePlate])
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model Payment {
+  id String @id @default(uuid())
+
+  sessionId String         @unique
+  session   ParkingSession @relation(fields: [sessionId], references: [id], onDelete: Restrict)
+
+  provider          String
+  amount            Int
+  status            PaymentStatus @default(PENDING)
+  providerReference String?
+  paidAt            DateTime?
+
+  archivedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([sessionId])
+  @@index([status])
+}

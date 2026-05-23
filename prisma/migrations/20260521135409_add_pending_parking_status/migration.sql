@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Parking" ALTER COLUMN "status" SET DEFAULT 'PENDING';
