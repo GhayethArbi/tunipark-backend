@@ -1,0 +1,8 @@
+export enum ParkingInteractionType {
+  VIEW = 'VIEW',
+  RESERVE = 'RESERVE',
+  CANCEL = 'CANCEL',
+  START_SESSION = 'START_SESSION',
+  END_SESSION = 'END_SESSION',
+  FAVORITE = 'FAVORITE',
+}

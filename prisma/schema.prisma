@@ -17,6 +17,8 @@ model User {
   isBanned              Boolean  @default(false)
   password              String
   role                  UserRole @default(USER)
+  parkingSessions       ParkingSession[]
+  parkingInteractions   ParkingInteraction[]
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
@@ -95,7 +97,7 @@ model Parking {
   pictures          String[]            @default([])
   location          Json
   status            ParkingStatus       @default(PENDING)
-
+  interactions      ParkingInteraction[]
   availablePlaces   Int       @default(1)
   maxPlaces         Int       @default(1)
   vehicleTypes      ParkingVehicleType[]  @default([])
@@ -163,6 +165,10 @@ model ParkingSession {
   vehiclePlate String
   vehicleBrand String?
   vehicleModel String?
+  
+
+  userId       String?
+  user         User? @relation(fields: [userId], references: [id], onDelete: Restrict)
 
   startTime DateTime
   endTime   DateTime?
@@ -185,6 +191,32 @@ enum PaymentStatus {
   PENDING
   PAID
   FAILED
+}
+enum ParkingInteractionType {
+  VIEW
+  RESERVE
+  CANCEL
+  START_SESSION
+  END_SESSION
+  FAVORITE
+}
+model ParkingInteraction {
+  id String @id @default(uuid())
+
+  userId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  parkingId String
+  parking   Parking @relation(fields: [parkingId], references: [id], onDelete: Restrict)
+
+  interactionType ParkingInteractionType
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([parkingId])
+  @@index([interactionType])
+  @@index([createdAt])
 }
 
 model Payment {

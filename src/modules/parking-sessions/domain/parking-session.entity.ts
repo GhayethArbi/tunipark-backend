@@ -3,6 +3,8 @@ import { SessionStatus } from '@prisma/client';
 export class ParkingSessionEntity {
   constructor(
     public readonly id: string,
+
+    public readonly userId: string,
     public readonly parkingId: string,
 
     public readonly vehiclePlate: string,
@@ -13,7 +15,7 @@ export class ParkingSessionEntity {
     public readonly endTime: Date | null,
 
     public readonly status: SessionStatus,
-    public readonly paidDuration: number, // minutes
+    public readonly paidDuration: number,
 
     public readonly createdAt: Date,
     public readonly updatedAt: Date,
@@ -24,7 +26,10 @@ export class ParkingSessionEntity {
   }
 
   canBeCancelled(): boolean {
-    return this.status === SessionStatus.CREATED || this.status === SessionStatus.ACTIVE;
+    return (
+      this.status === SessionStatus.CREATED ||
+      this.status === SessionStatus.ACTIVE
+    );
   }
 
   durationInMinutes(now: Date = new Date()): number {
