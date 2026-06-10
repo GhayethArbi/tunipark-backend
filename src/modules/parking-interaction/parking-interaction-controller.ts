@@ -3,7 +3,12 @@ import { LogParkingViewDto } from './dto/log-parking-view.dto';
 import { JwtGuard } from 'src/common/auth/jwt.guard';
 import { ParkingInteractionType } from './domain/parking-interaction-type.enum';
 import { LogParkingInteractionUseCase } from './use-cases/log-parking-interaction.use-case';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('Parking Sessions')
+@ApiBearerAuth('access-token')
+@UseGuards(JwtGuard)
 @Controller('parking-interactions')
 export class ParkingInteractionController {
     constructor(
@@ -11,6 +16,8 @@ export class ParkingInteractionController {
     ) { }
 
     @UseGuards(JwtGuard)
+    @ApiOperation({ summary: 'view interactions' })
+
     @Post('view')
     async logView(@Req() req, @Body() dto: LogParkingViewDto) {
         const userId = req.user.id;
