@@ -6,7 +6,7 @@ import { LogParkingInteractionUseCase } from './use-cases/log-parking-interactio
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 
-@ApiTags('Parking Sessions')
+@ApiTags('Parking Interactions') 
 @ApiBearerAuth('access-token')
 @UseGuards(JwtGuard)
 @Controller('parking-interactions')
