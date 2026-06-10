@@ -16,13 +16,14 @@ import { ParkingSessionsModule } from './modules/parking-sessions/parking-sessio
 import { PaymentsModule } from './modules/payments/payments.module';
 import { ConfigModule } from '@nestjs/config';
 import { BcryptService } from './common/services/bcrypt.service';
+import { ParkingInteractionModule } from './modules/parking-interaction/parking-interaction.module';
 
 @Module({
   imports: [ThrottlerModule.forRoot([{ ttl: 60, limit: 20, },]),
   ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule, UsersModule, AuthModule, AuthCommonModule,
     ParkingsModule, ParkingZonesModule, TariffsModule,
-    ParkingSessionsModule, PaymentsModule],
+    ParkingSessionsModule, PaymentsModule, ParkingInteractionModule],
 
   controllers: [AppController],
 
