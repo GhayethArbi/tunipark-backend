@@ -18,10 +18,10 @@ export class PrismaPaymentRepository implements PaymentRepository {
         if (!session) throw new NotFoundException('Session not found');
         console.log("PrismaPaymentRepository create i m in 3");
 
-        // optional rule: don't allow payment if session cancelled
-        if (session.status === SessionStatus.CANCELLED) {
-            throw new BadRequestException('Cannot pay a cancelled session');
-        }
+        // // optional rule: don't allow payment if session cancelled
+        // if (session.status === SessionStatus.CANCELLED) {
+        //     throw new BadRequestException('Cannot pay a cancelled session');
+        // }
         console.log("PrismaPaymentRepository create i m in 4");
 
         // 1–1 payment

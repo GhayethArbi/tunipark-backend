@@ -35,6 +35,7 @@ export class ParkingSessionsController {
     console.log("create session start now ...");
     if (!user?.id && !user?.sub) throw new UnauthorizedException('Missing user');
     const userId = user.id ?? user.sub;
+    console.log("userId:", userId);
     return this.createUC.execute(userId, dto);
   }
 

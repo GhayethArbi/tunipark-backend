@@ -5,9 +5,8 @@ import { ParkingInteractionType } from '../domain/parking-interaction-type.enum'
 
 @Injectable()
 export class ParkingInteractionPrismaRepository
-  implements ParkingInteractionRepository
-{
-  constructor(private readonly prisma: PrismaService) {}
+  implements ParkingInteractionRepository {
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(data: {
     userId: string;
@@ -15,7 +14,11 @@ export class ParkingInteractionPrismaRepository
     interactionType: ParkingInteractionType;
   }): Promise<void> {
     await this.prisma.parkingInteraction.create({
-      data,
+      data: {
+        userId: data.userId,
+        parkingId: data.parkingId,
+        interactionType: data.interactionType,
+      },
     });
   }
 
@@ -30,6 +33,14 @@ export class ParkingInteractionPrismaRepository
           gte: since,
         },
       },
+    });
+  }
+  async findLatest() {
+    return this.prisma.parkingInteraction.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 20,
     });
   }
 }

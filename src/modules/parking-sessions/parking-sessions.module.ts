@@ -13,8 +13,12 @@ import { ListActiveParkingSessionsUseCase } from './use-cases/list-active-parkin
 import { ListSessionsByParkingUseCase } from './use-cases/list-sessions-by-parking.usecase';
 import { EndParkingSessionUseCase } from './use-cases/end-parking-session.usecase';
 import { CancelParkingSessionUseCase } from './use-cases/cancel-parking-session.usecase';
+import { ParkingInteractionModule } from '../parking-interaction/parking-interaction.module';
 
 @Module({
+  imports: [
+    ParkingInteractionModule,
+  ],
   controllers: [ParkingSessionsController],
   providers: [
     PrismaService,
@@ -31,4 +35,4 @@ import { CancelParkingSessionUseCase } from './use-cases/cancel-parking-session.
   ],
   exports: [],
 })
-export class ParkingSessionsModule {}
+export class ParkingSessionsModule { }

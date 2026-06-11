@@ -150,7 +150,6 @@ enum ParkingVehicleType {
 }
 
 enum SessionStatus {
-  CREATED
   ACTIVE
   EXPIRED
   CANCELLED
@@ -194,11 +193,8 @@ enum PaymentStatus {
 }
 enum ParkingInteractionType {
   VIEW
-  RESERVE
-  CANCEL
   START_SESSION
-  END_SESSION
-  FAVORITE
+  EXTEND_SESSION
 }
 model ParkingInteraction {
   id String @id @default(uuid())

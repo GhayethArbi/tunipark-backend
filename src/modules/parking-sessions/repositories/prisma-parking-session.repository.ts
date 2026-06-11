@@ -2,19 +2,18 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { ParkingSessionRepository } from './parking-session.repository';
 import { SessionStatus } from '@prisma/client';
+import { ParkingSessionEntity } from '../domain/parking-session.entity';
 
 @Injectable()
 export class PrismaParkingSessionRepository implements ParkingSessionRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(data: any) {
-    // 1) parking exists and not archived
     const parking = await this.prisma.parking.findFirst({
       where: { id: data.parkingId, archivedAt: null },
     });
     if (!parking) throw new NotFoundException('Parking not found');
 
-    // 2) prevent duplicate active session for same plate in same parking (optional rule)
     const existingActive = await this.prisma.parkingSession.findFirst({
       where: {
         parkingId: data.parkingId,
@@ -27,6 +26,7 @@ export class PrismaParkingSessionRepository implements ParkingSessionRepository 
 
     return this.prisma.parkingSession.create({
       data: {
+        user: { connect: { id: data.userId }, },
         parking: { connect: { id: data.parkingId } },
         vehiclePlate: data.vehiclePlate,
         vehicleBrand: data.vehicleBrand ?? null,
@@ -34,7 +34,7 @@ export class PrismaParkingSessionRepository implements ParkingSessionRepository 
         startTime: new Date(),
         endTime: null,
         status: SessionStatus.ACTIVE,
-        paidDuration: 0,
+        paidDuration: data.paidDuration,
       },
     });
   }
@@ -91,9 +91,9 @@ export class PrismaParkingSessionRepository implements ParkingSessionRepository 
     });
     if (!session) throw new NotFoundException('Session not found');
 
-    if (session.status !== SessionStatus.ACTIVE && session.status !== SessionStatus.CREATED) {
-      throw new BadRequestException('Only ACTIVE/CREATED sessions can be cancelled');
-    }
+    // if (session.status !== SessionStatus.ACTIVE && session.status !== SessionStatus.CREATED) {
+    //   throw new BadRequestException('Only ACTIVE/CREATED sessions can be cancelled');
+    // }
 
     return this.prisma.parkingSession.update({
       where: { id },
@@ -103,4 +103,14 @@ export class PrismaParkingSessionRepository implements ParkingSessionRepository 
       },
     });
   }
+  async updateEndTime(
+    sessionId: string,
+    endTime: Date,
+  ) {
+    return this.prisma.parkingSession.update({
+      where: { id: sessionId },
+      data: { endTime },
+    });
+  }
 }
+ 

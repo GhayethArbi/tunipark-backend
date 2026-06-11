@@ -11,4 +11,6 @@ export interface ParkingInteractionRepository {
   }): Promise<void>;
 
   countRecentViews(parkingId: string, minutes: number): Promise<number>;
+  findLatest(): Promise<any[]>;
 }
+

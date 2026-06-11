@@ -27,7 +27,7 @@ export class ParkingSessionEntity {
 
   canBeCancelled(): boolean {
     return (
-      this.status === SessionStatus.CREATED ||
+      //this.status === SessionStatus.CREATED ||
       this.status === SessionStatus.ACTIVE
     );
   }
