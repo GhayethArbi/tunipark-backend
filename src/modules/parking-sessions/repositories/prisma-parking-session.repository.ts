@@ -103,6 +103,7 @@ export class PrismaParkingSessionRepository implements ParkingSessionRepository 
       },
     });
   }
+
   async updateEndTime(
     sessionId: string,
     endTime: Date,
@@ -112,5 +113,14 @@ export class PrismaParkingSessionRepository implements ParkingSessionRepository 
       data: { endTime },
     });
   }
+
+  async activate(sessionId: string) {
+    return this.prisma.parkingSession.update({
+      where: { id: sessionId },
+      data: {
+        status: SessionStatus.ACTIVE,
+        startTime: new Date(),
+      },
+    });
+  }
 }
- 
