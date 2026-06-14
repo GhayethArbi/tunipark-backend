@@ -15,8 +15,14 @@ import { PaymentsWebhookController } from './payments.webhook.controller';
 import { FlouciService } from './providers/flouci/flouci.service';
 import { FlouciWebhookUseCase } from './use-cases/flouci-webhook.usecase';
 import { InitFlouciPaymentUseCase } from './use-cases/init-flouci-payment.usecase';
+import { ParkingInteractionModule } from '../parking-interaction/parking-interaction.module';
+import { ParkingSessionsModule } from '../parking-sessions/parking-sessions.module';
 
 @Module({
+    imports: [
+        ParkingSessionsModule,
+        ParkingInteractionModule,
+    ],
     controllers: [PaymentsController, PaymentsWebhookController],
     providers: [
         PrismaService, FlouciService,
@@ -30,6 +36,6 @@ import { InitFlouciPaymentUseCase } from './use-cases/init-flouci-payment.usecas
         ListPaymentsUseCase,
         InitFlouciPaymentUseCase,
         FlouciWebhookUseCase,
-    ], 
+    ],
 })
 export class PaymentsModule { }

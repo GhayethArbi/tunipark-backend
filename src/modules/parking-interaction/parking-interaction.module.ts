@@ -19,6 +19,6 @@ import { GetParkingAiScoreUseCase } from './use-cases/get-parking-ai-score.use-c
       useClass: ParkingInteractionPrismaRepository,
     },
   ],
-  exports: [LogParkingInteractionUseCase, FindParkingInteractionsUseCase],
+  exports: [LogParkingInteractionUseCase, FindParkingInteractionsUseCase, PARKING_INTERACTION_REPOSITORY],
 })
 export class ParkingInteractionModule { }

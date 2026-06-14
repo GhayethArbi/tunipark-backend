@@ -1,5 +1,7 @@
-import { Body, Controller, Get, Param, Patch, Post, Delete, Query, Req, UseGuards, BadRequestException, UploadedFiles,
-  UseInterceptors, } from '@nestjs/common';
+import {
+  Body, Controller, Get, Param, Patch, Post, Delete, Query, Req, UseGuards, BadRequestException, UploadedFiles,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateParkingUseCase } from './use-cases/create-parking.usecase';
 import { CreateParkingDto } from './dto/create-parking.dto';
@@ -9,6 +11,7 @@ import { JwtGuard } from 'src/common/auth/jwt.guard';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { GetRecommendedParkingsUseCase } from './use-cases/get-recommended-parkings.use-case';
 @ApiTags('Parkings')
 @ApiBearerAuth('access-token')
 @UseGuards(JwtGuard)
@@ -17,8 +20,10 @@ export class ParkingsController {
   constructor(
     private readonly createUC: CreateParkingUseCase,
     private readonly repo: ParkingRepository,
+    private readonly getRecommendedParkingsUseCase: GetRecommendedParkingsUseCase,
+
   ) { }
-@Post('upload-pictures')
+  @Post('upload-pictures')
   @UseInterceptors(
     FilesInterceptor('pictures', 10, {
       storage: diskStorage({
@@ -66,7 +71,7 @@ export class ParkingsController {
   @ApiOperation({ summary: 'Create a parking' })
   @ApiResponse({ status: 201, description: 'Parking created' })
   create(@Req() req: any, @Body() dto: CreateParkingDto) {
-    console.log("dto creating parking:"+ dto);
+    console.log("dto creating parking:" + dto);
     return this.createUC.execute(this.getUserId(req), dto);
   }
 
@@ -105,5 +110,10 @@ export class ParkingsController {
   @ApiParam({ name: 'id', example: 'uuid-parking-id' })
   archive(@Req() req: any, @Param('id') id: string) {
     return this.repo.archive(id, this.getUserId(req));
+  }
+  @Get('recommended')
+  @ApiOperation({ summary: 'Get AI recommended parkings' })
+  getRecommendedParkings() {
+    return this.getRecommendedParkingsUseCase.execute();
   }
 }

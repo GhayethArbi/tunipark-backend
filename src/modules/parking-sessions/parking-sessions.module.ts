@@ -33,6 +33,6 @@ import { ParkingInteractionModule } from '../parking-interaction/parking-interac
     EndParkingSessionUseCase,
     CancelParkingSessionUseCase,
   ],
-  exports: [],
+  exports: [ParkingSessionRepository],
 })
 export class ParkingSessionsModule { }
