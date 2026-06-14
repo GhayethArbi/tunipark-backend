@@ -10,7 +10,7 @@ export class GetParkingAiScoreUseCase {
   constructor(
     @Inject(PARKING_INTERACTION_REPOSITORY)
     private readonly repository: ParkingInteractionRepository,
-  ) {}
+  ) { }
 
   async execute(parkingId: string) {
     const views = await this.repository.countByType(
@@ -28,13 +28,19 @@ export class GetParkingAiScoreUseCase {
       ParkingInteractionType.EXTEND_SESSION,
     );
 
-    const conversionRate = views === 0 ? 0 : starts / views;
-    const extensionRate = starts === 0 ? 0 : extensions / starts;
+    // const conversionRate = views === 0 ? 0 : starts / views;
+    // const extensionRate = starts === 0 ? 0 : extensions / starts;
 
-    const score = Math.round(
-      conversionRate * 70 + extensionRate * 30,
-    );
+    // const score = Math.round(
+    //   conversionRate * 70 + extensionRate * 30,
+    // );
+    const rawConversionRate = views === 0 ? 0 : starts / views;
+    const rawExtensionRate = starts === 0 ? 0 : extensions / starts;
 
+    const conversionRate = Math.min(rawConversionRate, 1);
+    const extensionRate = Math.min(rawExtensionRate, 1);
+
+    const score = Math.round(conversionRate * 70 + extensionRate * 30);
     return {
       parkingId,
       views,
