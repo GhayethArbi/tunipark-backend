@@ -88,7 +88,12 @@ export class ParkingsController {
   listAll(@Query('zoneId') zoneId?: string) {
     return this.repo.listAllActive(zoneId);
   }
-
+  @Get('recommended')
+  @ApiOperation({ summary: 'Get AI recommended parkings' })
+  getRecommendedParkings() {
+    return this.getRecommendedParkingsUseCase.execute();
+  }
+  
   @Get(':id')
   @ApiOperation({ summary: 'Get parking by id' })
   @ApiParam({ name: 'id', example: 'uuid-parking-id' })
@@ -111,9 +116,5 @@ export class ParkingsController {
   archive(@Req() req: any, @Param('id') id: string) {
     return this.repo.archive(id, this.getUserId(req));
   }
-  @Get('recommended')
-  @ApiOperation({ summary: 'Get AI recommended parkings' })
-  getRecommendedParkings() {
-    return this.getRecommendedParkingsUseCase.execute();
-  }
+
 }
