@@ -12,5 +12,7 @@ export interface ParkingInteractionRepository {
 
   countRecentViews(parkingId: string, minutes: number): Promise<number>;
   findLatest(): Promise<any[]>;
+  countByType(parkingId: string, type: ParkingInteractionType): Promise<number>;
+
 }
 

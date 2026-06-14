@@ -33,7 +33,7 @@ export class PrismaParkingSessionRepository implements ParkingSessionRepository 
         vehicleModel: data.vehicleModel ?? null,
         startTime: new Date(),
         endTime: null,
-        status: SessionStatus.ACTIVE,
+        status: SessionStatus.CREATED,
         paidDuration: data.paidDuration,
       },
     });

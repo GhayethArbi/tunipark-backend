@@ -5,6 +5,7 @@ import { PARKING_INTERACTION_REPOSITORY } from './repositories/parking-interacti
 import { ParkingInteractionPrismaRepository } from './repositories/parking-interaction-prisma.repository';
 import { ParkingInteractionController } from './parking-interaction-controller';
 import { FindParkingInteractionsUseCase } from './use-cases/find-parking-interactions.use-case';
+import { GetParkingAiScoreUseCase } from './use-cases/get-parking-ai-score.use-case';
 
 @Module({
   controllers: [ParkingInteractionController],
@@ -12,6 +13,7 @@ import { FindParkingInteractionsUseCase } from './use-cases/find-parking-interac
     PrismaService,
     LogParkingInteractionUseCase,
     FindParkingInteractionsUseCase,
+    GetParkingAiScoreUseCase,
     {
       provide: PARKING_INTERACTION_REPOSITORY,
       useClass: ParkingInteractionPrismaRepository,
@@ -19,4 +21,4 @@ import { FindParkingInteractionsUseCase } from './use-cases/find-parking-interac
   ],
   exports: [LogParkingInteractionUseCase, FindParkingInteractionsUseCase],
 })
-export class ParkingInteractionModule {}
+export class ParkingInteractionModule { }

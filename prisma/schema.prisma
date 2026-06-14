@@ -150,6 +150,7 @@ enum ParkingVehicleType {
 }
 
 enum SessionStatus {
+  CREATED
   ACTIVE
   EXPIRED
   CANCELLED

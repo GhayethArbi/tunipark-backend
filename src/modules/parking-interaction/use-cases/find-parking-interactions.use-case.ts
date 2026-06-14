@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ParkingInteractionType } from '../domain/parking-interaction-type.enum';
 import { PARKING_INTERACTION_REPOSITORY, ParkingInteractionRepository } from '../repositories/parking-interaction.repository';
 
 

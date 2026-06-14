@@ -4,8 +4,7 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 import { ParkingInteractionType } from '../domain/parking-interaction-type.enum';
 
 @Injectable()
-export class ParkingInteractionPrismaRepository
-  implements ParkingInteractionRepository {
+export class ParkingInteractionPrismaRepository implements ParkingInteractionRepository {
   constructor(private readonly prisma: PrismaService) { }
 
   async create(data: {
@@ -35,6 +34,7 @@ export class ParkingInteractionPrismaRepository
       },
     });
   }
+
   async findLatest() {
     return this.prisma.parkingInteraction.findMany({
       orderBy: {
@@ -43,4 +43,14 @@ export class ParkingInteractionPrismaRepository
       take: 20,
     });
   }
+
+  async countByType(parkingId: string, type: ParkingInteractionType): Promise<number> {
+    return this.prisma.parkingInteraction.count({
+      where: {
+        parkingId,
+        interactionType: type,
+      },
+    });
+  }
+
 }
