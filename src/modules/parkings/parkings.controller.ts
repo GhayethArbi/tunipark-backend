@@ -88,12 +88,18 @@ export class ParkingsController {
   listAll(@Query('zoneId') zoneId?: string) {
     return this.repo.listAllActive(zoneId);
   }
+
   @Get('recommended')
-  @ApiOperation({ summary: 'Get AI recommended parkings' })
-  getRecommendedParkings() {
-    return this.getRecommendedParkingsUseCase.execute();
+  getRecommendedParkings(
+    @Query('lat') lat: string,
+    @Query('lng') lng: string,
+  ) {
+    return this.getRecommendedParkingsUseCase.execute({
+      lat: Number(lat),
+      lng: Number(lng),
+    });
   }
-  
+
   @Get(':id')
   @ApiOperation({ summary: 'Get parking by id' })
   @ApiParam({ name: 'id', example: 'uuid-parking-id' })
