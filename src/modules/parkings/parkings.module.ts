@@ -7,10 +7,11 @@ import { CreateParkingUseCase } from './use-cases/create-parking.usecase';
 import { AdminParkingsController } from './admin-parkings.controller';
 import { GetRecommendedParkingsUseCase } from './use-cases/get-recommended-parkings.use-case';
 import { ParkingInteractionModule } from '../parking-interaction/parking-interaction.module';
+import { AiModule } from '../ai/ai.module';
 
 @Module({
   imports: [
-    ParkingInteractionModule,
+    ParkingInteractionModule, AiModule,
   ],
   controllers: [ParkingsController, AdminParkingsController],
   providers: [

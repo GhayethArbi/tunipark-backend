@@ -6,15 +6,17 @@ import {
   ParkingInteractionRepository,
 } from 'src/modules/parking-interaction/repositories/parking-interaction.repository';
 import { ParkingInteractionType } from 'src/modules/parking-interaction/domain/parking-interaction-type.enum';
+import { AiService } from 'src/modules/ai/ai.service';
 
 @Injectable()
 export class GetRecommendedParkingsUseCase {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly aiService: AiService,
 
     @Inject(PARKING_INTERACTION_REPOSITORY)
     private readonly interactionRepository: ParkingInteractionRepository,
-  ) {}
+  ) { }
 
   async execute(input: { lat: number; lng: number }) {
     const parkings = await this.prisma.parking.findMany({
@@ -64,22 +66,28 @@ export class GetRecommendedParkingsUseCase {
 
         const distanceKm = parkingCoords
           ? this.calculateDistanceKm(
-              input.lat,
-              input.lng,
-              parkingCoords.lat,
-              parkingCoords.lng,
-            )
+            input.lat,
+            input.lng,
+            parkingCoords.lat,
+            parkingCoords.lng,
+          )
           : 999;
-
-        const distanceScore = this.calculateDistanceScore(distanceKm);
 
         const behaviorScore = conversionRate * 0.7 + extensionRate * 0.3;
 
-        const finalScore = Math.round(
-          distanceScore * 40 +
-            availabilityScore * 25 +
-            behaviorScore * 35,
-        );
+        const price =
+          parking.tariff?.pricePerMonth ??
+          parking.tariff?.pricePerDay ??
+          parking.tariff?.pricePerUnit ??
+          0;
+
+        const aiPrediction = await this.aiService.predict({
+          distanceKm,
+          availabilityScore,
+          conversionRate,
+          extensionRate,
+          price,
+        });
 
         return {
           ...parking,
@@ -88,18 +96,14 @@ export class GetRecommendedParkingsUseCase {
             starts,
             extensions,
             distanceKm: Number(distanceKm.toFixed(2)),
-            distanceScore: Number(distanceScore.toFixed(2)),
             conversionRate: Number(conversionRate.toFixed(2)),
             extensionRate: Number(extensionRate.toFixed(2)),
             availabilityScore: Number(availabilityScore.toFixed(2)),
             behaviorScore: Number(behaviorScore.toFixed(2)),
-            score: finalScore,
-            recommendation:
-              finalScore >= 70
-                ? 'HIGHLY_RECOMMENDED'
-                : finalScore >= 40
-                  ? 'RECOMMENDED'
-                  : 'LOW_PRIORITY',
+            price,
+            score: aiPrediction.score,
+            recommendation: aiPrediction.recommendation,
+            source: 'ML_RANDOM_FOREST',
           },
         };
       }),
@@ -132,13 +136,6 @@ export class GetRecommendedParkingsUseCase {
     return null;
   }
 
-  private calculateDistanceScore(distanceKm: number): number {
-    if (distanceKm <= 0.3) return 1;
-    if (distanceKm >= 3) return 0;
-
-    return 1 - distanceKm / 3;
-  }
-
   private calculateDistanceKm(
     lat1: number,
     lng1: number,
@@ -153,9 +150,9 @@ export class GetRecommendedParkingsUseCase {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.toRadians(lat1)) *
-        Math.cos(this.toRadians(lat2)) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
+      Math.cos(this.toRadians(lat2)) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
