@@ -9,15 +9,15 @@ export class InitFlouciPaymentUseCase {
     private readonly flouci: FlouciService,
   ) { }
 
-  async execute(sessionId: string) {
-    // 1) You can compute amount from session/tariff later.
+  async execute(sessionId: string, amount: number) {    // 1) You can compute amount from session/tariff later.
     // For now we assume amount is stored somewhere or fixed.
     // Recommended: compute amount based on TariffCalculator.
 
     console.log("init/flouci i m in");
     console.log("you dto init flouci is :" + sessionId);
-    const amount = 1200;
-    console.log("let s check use case11");
+    if (!amount || amount <= 0) {
+      throw new BadRequestException('Invalid payment amount');
+    } console.log("let s check use case11");
 
     const apiUrl = process.env.API_PUBLIC_URL;
     if (!apiUrl) throw new BadRequestException('Missing API_PUBLIC_URL');

@@ -1,9 +1,10 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNumber, IsPositive, IsString } from 'class-validator';
 
 export class InitFlouciPaymentDto {
-  @ApiProperty({ example: 'uuid-session-id' })
   @IsString()
-  @IsNotEmpty()
   sessionId: string;
+
+  @IsNumber()
+  @IsPositive()
+  amount: number;
 }

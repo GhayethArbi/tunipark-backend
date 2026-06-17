@@ -103,7 +103,7 @@ export class PaymentsController {
   @Post('init/flouci')
   @ApiOperation({ summary: 'Init Flouci payment (mobile gets payLink)' })
   initFlouci(@Body() dto: InitFlouciPaymentDto) {
-    return this.initFlouciUC.execute(dto.sessionId);
+    return this.initFlouciUC.execute(dto.sessionId, dto.amount);
   }
 
   @ApiBearerAuth('access-token')
