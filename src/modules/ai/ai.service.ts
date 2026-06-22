@@ -11,14 +11,14 @@ export type AiPredictionInput = {
 export type AiPredictionResult = {
   score: number;
   recommendation: 'HIGHLY_RECOMMENDED' | 'RECOMMENDED' | 'LOW_PRIORITY';
+  source: 'MODEL' | 'FALLBACK';
 };
 
 @Injectable()
 export class AiService {
   private readonly logger = new Logger(AiService.name);
 
-  private readonly aiServiceUrl =
-    process.env.AI_SERVICE_URL || 'http://localhost:8000';
+  private readonly aiServiceUrl = process.env.AI_SERVICE_URL || 'http://localhost:8000';
 
   async predict(input: AiPredictionInput): Promise<AiPredictionResult> {
     try {
@@ -39,6 +39,7 @@ export class AiService {
       return {
         score: Number(data.score ?? 0),
         recommendation: data.recommendation ?? 'LOW_PRIORITY',
+        source: 'MODEL',
       };
     } catch (error) {
       this.logger.warn(
@@ -70,6 +71,7 @@ export class AiService {
           : score >= 40
             ? 'RECOMMENDED'
             : 'LOW_PRIORITY',
+      source: 'FALLBACK',
     };
   }
 }
