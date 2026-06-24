@@ -19,4 +19,6 @@ export abstract class ParkingSessionRepository {
   abstract end(id: string): Promise<ParkingSession>;
   abstract cancel(id: string): Promise<ParkingSession>;
   abstract activate(sessionId: string): Promise<any>;
+  abstract findByUserId(userId: string): Promise<ParkingSession[]>;
+
 }

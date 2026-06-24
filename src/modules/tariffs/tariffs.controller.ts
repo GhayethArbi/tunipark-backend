@@ -36,6 +36,7 @@ export class TariffsController {
   @ApiParam({ name: 'parkingId', example: 'uuid-parking-id' })
   getByParking(@CurrentUser() user: any, @Param('parkingId') parkingId: string) {
     if (!user?.id) throw new UnauthorizedException('Missing user');
+    console.log("getByParking called with parkingId:", parkingId, "and userId:", user.id);
     return this.repo.findByParkingId(parkingId, user.id);
   }
 

@@ -7,7 +7,7 @@ export class GetParkingSessionUseCase {
 
   async execute(id: string) {
     const s = await this.repo.findById(id);
-    if (!s) throw new NotFoundException('Session not found');
+    if (!s) throw new NotFoundException('Session not found to get');
     return s;
   }
 }

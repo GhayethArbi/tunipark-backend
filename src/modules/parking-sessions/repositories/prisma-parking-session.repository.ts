@@ -123,4 +123,31 @@ export class PrismaParkingSessionRepository implements ParkingSessionRepository 
       },
     });
   }
+
+  
+  async findByUserId(userId: string) {
+    const sessions = await this.prisma.parkingSession.findMany({
+    where: { userId, },
+    orderBy: { createdAt: 'desc', },
+  });
+  return sessions;
+    //return sessions;
+    // return sessions.map(
+    //   (session) =>
+    //     new ParkingSessionEntity(
+    //       session.id,
+    //       session.userId,
+    //       session.parkingId,
+    //       session.vehiclePlate,
+    //       session.vehicleBrand,
+    //       session.vehicleModel,
+    //       session.startTime,
+    //       session.endTime,
+    //       session.status,
+    //       session.paidDuration,
+    //       session.createdAt,
+    //       session.updatedAt,
+    //     ),
+    // );
+  }
 }

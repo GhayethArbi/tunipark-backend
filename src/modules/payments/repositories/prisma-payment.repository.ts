@@ -15,7 +15,7 @@ export class PrismaPaymentRepository implements PaymentRepository {
         });
         console.log("PrismaPaymentRepository create i m in 2");
 
-        if (!session) throw new NotFoundException('Session not found');
+        if (!session) throw new NotFoundException('Session not found to create');
         console.log("PrismaPaymentRepository create i m in 3");
 
         // // optional rule: don't allow payment if session cancelled

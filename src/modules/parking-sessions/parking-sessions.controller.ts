@@ -13,6 +13,7 @@ import { ListActiveParkingSessionsUseCase } from './use-cases/list-active-parkin
 import { ListSessionsByParkingUseCase } from './use-cases/list-sessions-by-parking.usecase';
 import { EndParkingSessionUseCase } from './use-cases/end-parking-session.usecase';
 import { CancelParkingSessionUseCase } from './use-cases/cancel-parking-session.usecase';
+import { GetUserParkingSessionsUseCase } from './use-cases/get-user-parking-sessions.usecase';
 
 @ApiTags('Parking Sessions')
 @ApiBearerAuth('access-token')
@@ -27,7 +28,8 @@ export class ParkingSessionsController {
     private readonly listByParkingUC: ListSessionsByParkingUseCase,
     private readonly endUC: EndParkingSessionUseCase,
     private readonly cancelUC: CancelParkingSessionUseCase,
-  ) {}
+    private readonly getUserParkingSessionsUseCase: GetUserParkingSessionsUseCase,
+  ) { }
 
   @Post()
   @ApiOperation({ summary: 'Start a parking session (ACTIVE)' })
@@ -50,7 +52,13 @@ export class ParkingSessionsController {
   listActive() {
     return this.listActiveUC.execute();
   }
-
+  @Get('me')
+  async getMySessions(@CurrentUser() user: any) {
+    console.log("getMySessions called");
+    if (!user?.id && !user?.sub) throw new UnauthorizedException('Missing user');
+    const userId = user.id ?? user.sub;
+    return this.getUserParkingSessionsUseCase.execute(userId);
+  }
   @Get('by-parking/:parkingId')
   @ApiOperation({ summary: 'List sessions by parkingId' })
   @ApiParam({ name: 'parkingId', example: 'uuid-parking-id' })
@@ -78,4 +86,5 @@ export class ParkingSessionsController {
   cancel(@Param('id') id: string) {
     return this.cancelUC.execute(id);
   }
+
 }

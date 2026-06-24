@@ -90,9 +90,9 @@ export class PrismaTariffRepository implements TariffRepository {
       },
     });
   }
-  findByParkingId(parkingId: string, ownerId: string): Promise<Tariff | null> {
-    return this.prisma.tariff.findFirst({
-      where: { parkingId, archivedAt: null, parking: { ownerId } },
+  async findByParkingId(parkingId: string, ownerId: string): Promise<Tariff | null> {
+    return await this.prisma.tariff.findFirst({
+      where: { parkingId, archivedAt: null },
     });
   }
 

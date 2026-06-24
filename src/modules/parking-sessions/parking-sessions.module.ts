@@ -14,6 +14,7 @@ import { ListSessionsByParkingUseCase } from './use-cases/list-sessions-by-parki
 import { EndParkingSessionUseCase } from './use-cases/end-parking-session.usecase';
 import { CancelParkingSessionUseCase } from './use-cases/cancel-parking-session.usecase';
 import { ParkingInteractionModule } from '../parking-interaction/parking-interaction.module';
+import { GetUserParkingSessionsUseCase } from './use-cases/get-user-parking-sessions.usecase';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ParkingInteractionModule } from '../parking-interaction/parking-interac
     ListSessionsByParkingUseCase,
     EndParkingSessionUseCase,
     CancelParkingSessionUseCase,
+    GetUserParkingSessionsUseCase,
   ],
   exports: [ParkingSessionRepository],
 })
