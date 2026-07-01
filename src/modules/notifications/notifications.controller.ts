@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req, UnauthorizedException } from '@nestjs/common';
 import { RegisterFcmTokenDto } from './dto/register-fcm-token.dto';
 import { RegisterFcmTokenUseCase } from './use-cases/register-fcm-token.use-case';
 import { FindUserNotificationsUseCase } from './use-cases/find-user-notifications.use-case';
 import { MarkNotificationAsReadUseCase } from './use-cases/mark-notification-as-read.use-case';
+import { CurrentUser } from 'src/common/auth/current-user.decorator';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -22,8 +23,11 @@ export class NotificationsController {
   }
 
   @Get()
-  findMyNotifications(@Req() req) {
-    return this.findUserNotificationsUseCase.execute(req.user.id);
+  findMyNotifications(@CurrentUser() user: any, @Req() req) {
+   if (!user?.id && !user?.sub) throw new UnauthorizedException('Missing user');
+      const userId = user.id ?? user.sub;
+      console.log('User ID:', userId); // Log the user ID for debugging
+    return this.findUserNotificationsUseCase.execute(userId);
   }
 
   @Patch(':id/read')

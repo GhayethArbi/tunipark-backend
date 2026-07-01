@@ -18,20 +18,21 @@ import { ConfigModule } from '@nestjs/config';
 import { BcryptService } from './common/services/bcrypt.service';
 import { ParkingInteractionModule } from './modules/parking-interaction/parking-interaction.module';
 import { AiModule } from './modules/ai/ai.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [ThrottlerModule.forRoot([{ ttl: 60, limit: 20, },]),
   ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule, UsersModule, AuthModule, AuthCommonModule,
     ParkingsModule, ParkingZonesModule, TariffsModule,
-    ParkingSessionsModule, PaymentsModule, ParkingInteractionModule, AiModule],
+    ParkingSessionsModule, PaymentsModule, ParkingInteractionModule, AiModule, NotificationsModule ],
 
   controllers: [AppController],
 
   providers: [{
     provide: APP_GUARD,
     useClass: ThrottlerGuard,
-  },
+  },  
     AppService, MailService, SmsService, BcryptService],
 })
 export class AppModule { }

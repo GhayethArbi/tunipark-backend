@@ -131,7 +131,6 @@ export class PrismaParkingSessionRepository implements ParkingSessionRepository 
       include: { parking: true, payment: true,},
       orderBy: { createdAt: 'desc', },
     });
-    console.log("sessions found for userId:", userId, sessions);
     return sessions;
     //return sessions;
     // return sessions.map(
