@@ -8,10 +8,11 @@ import { AdminParkingsController } from './admin-parkings.controller';
 import { GetRecommendedParkingsUseCase } from './use-cases/get-recommended-parkings.use-case';
 import { ParkingInteractionModule } from '../parking-interaction/parking-interaction.module';
 import { AiModule } from '../ai/ai.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
-    ParkingInteractionModule, AiModule,
+    ParkingInteractionModule, AiModule, NotificationsModule
   ],
   controllers: [ParkingsController, AdminParkingsController],
   providers: [

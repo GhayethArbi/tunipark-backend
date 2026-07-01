@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ParkingRepository } from '../repositories/parking.repository';
 import {
   AccessMode,
@@ -6,12 +6,17 @@ import {
   ParkingType,
 } from '../domain/parking.enums';
 import { ParkingVehicleType } from '../domain/parking-vehicle-type.enum';
+import { SendNotificationUseCase } from 'src/modules/notifications/use-cases/send-notification.use-case';
 
 @Injectable()
 export class CreateParkingUseCase {
-  constructor(private readonly repo: ParkingRepository) { }
+  private readonly logger = new Logger(CreateParkingUseCase.name);
 
-  execute(
+  constructor(
+    private readonly repo: ParkingRepository,
+    private readonly sendNotificationUseCase: SendNotificationUseCase,
+  ) { }
+  async execute(
     ownerId: string,
     input: {
       title: string;
@@ -29,11 +34,29 @@ export class CreateParkingUseCase {
       zoneId?: string | null;
     }
   ) {
-    return this.repo.create({
+    const parking = await this.repo.create({
       ...input,
       ownerId,
       availablePlaces: input.maxPlaces,
-
     });
+
+
+    try {
+      await this.sendNotificationUseCase.execute({
+        userId: ownerId,
+        title: 'Parking submitted',
+        body: `"${parking.title}" was created and is pending review.`,
+        type: 'PARKING_CREATED',
+        data: {
+          parkingId: parking.id,
+          status: parking.status,
+        },
+      });
+    } catch (err) {
+      this.logger.warn(
+        `Failed to send parking-created notification for parking ${parking.id}: ${err instanceof Error ? err.message : err}`,
+      );
+    }
+    return parking;
   }
 }
