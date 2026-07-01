@@ -124,13 +124,15 @@ export class PrismaParkingSessionRepository implements ParkingSessionRepository 
     });
   }
 
-  
+
   async findByUserId(userId: string) {
     const sessions = await this.prisma.parkingSession.findMany({
-    where: { userId, },
-    orderBy: { createdAt: 'desc', },
-  });
-  return sessions;
+      where: { userId, },
+      include: { parking: true, payment: true,},
+      orderBy: { createdAt: 'desc', },
+    });
+    console.log("sessions found for userId:", userId, sessions);
+    return sessions;
     //return sessions;
     // return sessions.map(
     //   (session) =>
